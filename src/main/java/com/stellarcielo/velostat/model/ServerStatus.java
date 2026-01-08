@@ -1,4 +1,4 @@
-package com.stellarcielo.velostat;
+package com.stellarcielo.velostat.model;
 
 public class ServerStatus {
 
@@ -12,7 +12,7 @@ public class ServerStatus {
     public int playersMax;
 
     public String versionName;
-    public String protocol;
+    public int protocol;
 
     public long updateAt;
 }

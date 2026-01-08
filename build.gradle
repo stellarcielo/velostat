@@ -3,6 +3,7 @@ plugins {
     id 'eclipse'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.8'
     id("xyz.jpenilla.run-velocity") version "2.3.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = 'com.stellarcielo'
@@ -17,8 +18,13 @@ repositories {
 }
 
 dependencies {
+    implementation("org.bstats:bstats-velocity:3.1.0")
+
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation("com.google.code.gson:gson:2.13.2")
 }
 
 tasks {
@@ -38,6 +44,12 @@ java {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release.set(targetJavaVersion)
+}
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+    dependencies { exclude { it.moduleGroup != "org.bstats" } }
+    relocate("org.bstats", project.group.toString())
 }
 
 def templateSource = file('src/main/templates')

@@ -13,12 +13,14 @@ public class StatusCollector {
 
     private final ProxyServer proxy;
     private final Logger logger;
+    private final int intervalSeconds;
     private final Map<String, ServerStatus> cache = new ConcurrentHashMap<>();
     private ScheduledExecutorService scheduler;
 
-    public StatusCollector(ProxyServer proxy, Logger logger) {
+    public StatusCollector(ProxyServer proxy, Logger logger, int intervalSeconds) {
         this.proxy = proxy;
         this.logger = logger;
+        this.intervalSeconds = intervalSeconds;
     }
 
     public void start() {
@@ -26,7 +28,7 @@ public class StatusCollector {
         scheduler.scheduleAtFixedRate(
                 this::updateAll,
                 0,
-                10,
+                intervalSeconds,
                 TimeUnit.SECONDS
         );
     }

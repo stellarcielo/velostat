@@ -42,6 +42,9 @@ public class Velostat {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         logger.info("Starting Velostat...");
 
+        VersionChecker checker = new VersionChecker("velostat", BuildConstants.VERSION, logger);
+        checker.checkForNewRelease();
+
         ConfigManager config;
         try {
             config = new ConfigManager(dataDir, logger);

@@ -19,10 +19,10 @@ public class Velostat {
 
     private final Logger logger;
     private final ProxyServer proxy;
+    private final Metrics.Factory metricsFactory;
 
     private StatusCollector collector;
     private StatusHttpServer server;
-    Metrics.Factory metricsFactory;
 
     @Inject
     public Velostat(Logger logger, ProxyServer proxy, Metrics.Factory metricsFactory) {

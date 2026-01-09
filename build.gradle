@@ -47,9 +47,15 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-    dependencies { exclude { it.moduleGroup != "org.bstats" } }
-    relocate("org.bstats", project.group.toString())
+    // アーカイブ名の末尾に -all を付けない設定（必要に応じて）
+    archiveClassifier.set('')
+
+    // bStatsとnanohttpdをリロケートして衝突を避ける
+    relocate 'org.bstats', 'com.stellarcielo.velostat.libs.bstats'
+    relocate 'org.nanohttpd', 'com.stellarcielo.velostat.libs.nanohttpd'
+
+    // 依存関係のフィルタリングを削除するか、含めるものを明示します
+    // 以下の行を削除して、implementationされたものをすべて含めるのが一般的です
 }
 
 def templateSource = file('src/main/templates')

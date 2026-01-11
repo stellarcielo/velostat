@@ -11,6 +11,7 @@ public class ServerStatusExporter {
     private final ConfigManager config;
 
     public ServerStatusExporter(ConfigManager config) {
+        
         this.config = config;
     }
 
@@ -30,19 +31,17 @@ public class ServerStatusExporter {
             out.put("motd", status.motd);
 
         if (config.exportServerPlayers()) {
-            out.put("players", Map.of(
-                    "online", status.playersOnline,
-                    "max", status.playersMax
-            ));
+            Map<String, Object> players = new LinkedHashMap<>();
+            players.put("online", status.playersOnline);
+            players.put("max", status.playersMax);
+            out.put("players", players);
         }
-
         if (config.exportServerVersion()) {
-            out.put("version", Map.of(
-                    "name", status.versionName,
-                    "protocol", status.protocol
-            ));
+            Map<String, Object> version = new LinkedHashMap<>();
+            version.put("name", status.versionName); // status.versionName が null でも HashMap なら許容される
+            version.put("protocol", status.protocol);
+            out.put("version", version);
         }
-
         if (config.exportServerUpdatedAt())
             out.put("updated_at", status.updateAt);
 

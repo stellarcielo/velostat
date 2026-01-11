@@ -14,12 +14,14 @@ public class StatusHttpServer extends NanoHTTPD{
 
     private final StatusCollector collector;
     private final Gson gson = new GsonBuilder().create();
+    private final ServerStatusExporter exporter;
     ConfigManager config;
 
     public StatusHttpServer(StatusCollector collector, int port, ConfigManager config) {
         super(port);
         this.collector = collector;
         this.config = config;
+        this.exporter = new ServerStatusExporter(config);
     }
 
     @Override
@@ -32,8 +34,6 @@ public class StatusHttpServer extends NanoHTTPD{
 
         if (uri.equals("/status")) {
             Map<String, Object> result = new LinkedHashMap<>();
-
-            ServerStatusExporter exporter = new ServerStatusExporter(config);
 
             collector.getSnapshot().forEach((name, status) -> result.put(name, exporter.export(status)));
 

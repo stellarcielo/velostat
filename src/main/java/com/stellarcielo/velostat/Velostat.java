@@ -61,7 +61,7 @@ public class Velostat {
         collector.start();
 
         try {
-            server = new StatusHttpServer(collector, config.apiPort());
+            server = new StatusHttpServer(collector, config.apiPort(), config);
             server.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         } catch (Exception e) {
             logger.error("Failed to start HTTP server", e);

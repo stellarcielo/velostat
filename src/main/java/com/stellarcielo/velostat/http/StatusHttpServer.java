@@ -7,6 +7,7 @@ import com.stellarcielo.velostat.config.ConfigManager;
 import com.stellarcielo.velostat.export.ServerStatusExporter;
 import fi.iki.elonen.NanoHTTPD;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class StatusHttpServer extends NanoHTTPD{
@@ -30,13 +31,13 @@ public class StatusHttpServer extends NanoHTTPD{
         }
 
         if (uri.equals("/status")) {
-            Map<String, ?> snapshot = collector.getSnapshot();
-            String json = gson.toJson(snapshot);
-            return newFixedLengthResponse(
-                    Response.Status.OK,
-                    "application/json",
-                    json
-            );
+            Map<String, Object> result = new LinkedHashMap<>();
+
+            ServerStatusExporter exporter = new ServerStatusExporter(config);
+
+            collector.getSnapshot().forEach((name, status) -> result.put(name, exporter.export(status)));
+
+            return newFixedLengthResponse(Response.Status.OK, "application/json", gson.toJson(result));
         }
         return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
     }

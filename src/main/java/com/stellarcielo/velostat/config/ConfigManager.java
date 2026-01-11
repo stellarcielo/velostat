@@ -47,18 +47,20 @@ public class ConfigManager {
 
 
     private void copyDefaultConfig(Path configPath) throws IOException {
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream("config.yml")) {
+        try (InputStream in = ConfigManager.class.getResourceAsStream("/config.yml")) {
 
             if (in == null) {
-                throw new FileNotFoundException("Default config.yml not found in resources");
-            }
 
-            Files.copy(in, configPath);
+                throw new FileNotFoundException("Default config.yml not found in jar resources");
+            }
+            java.nio.file.Files.copy(in, configPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
     private void migrateIfNeeded(Path configPath) throws IOException{
-        int version = (int) config.getOrDefault("version", 0);
+        int version = (int) config.getOrDefault("config_version", 0);
+
+        logger.info("Loaded config version {}", version);
 
         if (version == CONFIG_VERSION) return;
 

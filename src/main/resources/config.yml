@@ -1,17 +1,18 @@
+#dont edit config version
 config_version: 1
 
 api:
-  port: 8080
+  port: 8080 #server port
 
 ping:
-  interval_seconds: 10
+  interval_seconds: 10 #ping interval in seconds
 
-  export:
-    server:
-      name: true
-      address: true
-      status: true
-      motd: true
-      players: true
-      version: true
-      updated_at: true
+export:
+  server:
+    name: true
+    address: true
+    status: true
+    motd: true
+    players: true
+    version: true
+    updated_at: true

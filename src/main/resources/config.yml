@@ -5,3 +5,13 @@ api:
 
 ping:
   interval_seconds: 10
+
+  export:
+    server:
+      name: true
+      address: true
+      status: true
+      motd: true
+      players: true
+      version: true
+      updated_at: true

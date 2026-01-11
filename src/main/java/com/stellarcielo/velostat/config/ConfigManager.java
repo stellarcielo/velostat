@@ -82,6 +82,17 @@ public class ConfigManager {
         config.putIfAbsent("ping", Map.of(
                 "interval", 10
         ));
+        config.putIfAbsent("export", Map.of(
+                "server", Map.of(
+                        "name", true,
+                        "address", true,
+                        "status", true,
+                        "motd", true,
+                        "players", true,
+                        "version", true,
+                        "updated_at", true
+                )
+        ));
     }
 
     /* ===== getters ===== */
@@ -92,5 +103,49 @@ public class ConfigManager {
 
     public int pingIntervalSeconds() {
         return (int) ((Map<String, Object>) config.get("ping")).get("interval_seconds");
+    }
+
+    public boolean exportServerName() {
+        return exportFlag("server.name");
+    }
+
+    public boolean exportServerAddress() {
+        return exportFlag("server.address");
+    }
+
+    public boolean exportServerStatus() {
+        return exportFlag("server.status");
+    }
+
+    public boolean exportServerMotd() {
+        return exportFlag("server.motd");
+    }
+
+    public boolean exportServerPlayers() {
+        return exportFlag("server.players");
+    }
+
+    public boolean exportServerVersion() {
+        return exportFlag("server.version");
+    }
+
+    public boolean exportServerUpdatedAt() {
+        return exportFlag("server.updated_at");
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean exportFlag(String path) {
+        String[] keys = path.split("\\.");
+        Map<String, Object> current =
+                (Map<String, Object>) config.get("export");
+
+        for (String key : keys) {
+            Object next = current.get(key);
+            if (!(next instanceof Map)) {
+                return (boolean) next;
+            }
+            current = (Map<String, Object>) next;
+        }
+        return false;
     }
 }

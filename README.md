@@ -1,7 +1,12 @@
 This plugin provides a lightweight HTTP API that exports the real-time status of all Velocity backend servers in JSON format.
 Exported fields are fully configurable via config.yml, allowing safe public exposure.
 
-The game version is for all versions supported by Velocity 3.4.0-SNAPSHOT as it is added to the proxy server only. The game version must be specified and is specified, but see the [PaperMC website](https://docs.papermc.io/velocity/server-compatibility/) for details.
+The game version is for all versions supported by Velocity 4.3.0 as it is added to the proxy server only. The game version must be specified and is specified, but see the [PaperMC website](https://docs.papermc.io/velocity/server-compatibility/) for details.
+# Requirements
+- Velocity 4.3.0 or later
+- Java 25 or later
+
+Velocity 3.x is no longer supported since velostat 2.0.
 # Installation
 1. [Download](https://modrinth.com/plugin/velostat) the latest release of the plugin
 2. Put velostat-x.x.jar in /plugins directory of velocity

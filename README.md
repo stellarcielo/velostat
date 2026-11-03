@@ -24,6 +24,8 @@ This completes the process!
 | `export.server.players`    | Whether to include player counts (online/max) in the JSON output.                  | `true`  |
 | `export.server.version`    | Whether to include the game version name and protocol version in the JSON output.  | `true`  |
 | `export.server.updated_at` | Whether to include the last update timestamp in the JSON output.                   | `true`  |
+| `prometheus.enabled`       | Whether to expose metrics in the Prometheus format.                                | `true`  |
+| `prometheus.path`          | The path of the Prometheus metrics endpoint.                                       | `/metrics` |
 # Example Json output
 Accessing `http://<SERVER_IP>:<PORT>/status>` will return data with a `Content-Type: application/json`.
 ### FULL data
@@ -131,6 +133,54 @@ Accessing `http://<SERVER_IP>:<PORT>/status>` will return data with a `Content-T
 * Fields may be **omitted** depending on `config.yml` settings.
 * If a server is offline, only `name`, `address`, and `online` are guaranteed.
 * This API is intended for **internal dashboards, status pages, or monitoring tools**.
+# Prometheus metrics
+Accessing `http://<SERVER_IP>:<PORT>/metrics` returns metrics in the Prometheus text format.
+The path can be changed with `prometheus.path`, and the endpoint can be disabled with `prometheus.enabled`.
+
+| Metric                                          | Labels                          | Description                                                     |
+|:------------------------------------------------|:--------------------------------|:----------------------------------------------------------------|
+| `velostat_proxy_players_online`                 | -                               | Number of players connected to the proxy                        |
+| `velostat_server_up`                            | `server`                        | `1` if the server responded to the last ping, otherwise `0`     |
+| `velostat_server_players_online`                | `server`                        | Number of online players (online servers only)                  |
+| `velostat_server_players_max`                   | `server`                        | Maximum player capacity (online servers only)                   |
+| `velostat_server_ping_duration_seconds`         | `server`                        | Time taken by the last successful ping (online servers only)    |
+| `velostat_server_info`                          | `server`, `version`, `protocol` | Always `1`; carries the version information (online servers only) |
+| `velostat_server_last_update_timestamp_seconds` | `server`                        | Unix time of the last status update                             |
+
+All metrics are gauges. The `server` label is the server name defined in `velocity.toml`.
+### Example output
+```
+# HELP velostat_proxy_players_online Number of players connected to the proxy.
+# TYPE velostat_proxy_players_online gauge
+velostat_proxy_players_online 12
+# HELP velostat_server_up Whether the backend server responded to the last ping (1 = online, 0 = offline).
+# TYPE velostat_server_up gauge
+velostat_server_up{server="lobby"} 1
+velostat_server_up{server="survival"} 0
+# HELP velostat_server_players_online Number of players online reported by the backend server.
+# TYPE velostat_server_players_online gauge
+velostat_server_players_online{server="lobby"} 12
+# HELP velostat_server_players_max Maximum number of players reported by the backend server.
+# TYPE velostat_server_players_max gauge
+velostat_server_players_max{server="lobby"} 100
+# HELP velostat_server_ping_duration_seconds Time taken by the last successful ping to the backend server.
+# TYPE velostat_server_ping_duration_seconds gauge
+velostat_server_ping_duration_seconds{server="lobby"} 0.003916254
+# HELP velostat_server_info Version information reported by the backend server.
+# TYPE velostat_server_info gauge
+velostat_server_info{server="lobby",version="Paper 1.21.1",protocol="767"} 1
+# HELP velostat_server_last_update_timestamp_seconds Unix time of the last status update for the backend server.
+# TYPE velostat_server_last_update_timestamp_seconds gauge
+velostat_server_last_update_timestamp_seconds{server="lobby"} 1704681000.000
+velostat_server_last_update_timestamp_seconds{server="survival"} 1704681000.000
+```
+### Prometheus configuration example
+```yaml
+scrape_configs:
+  - job_name: velostat
+    static_configs:
+      - targets: ["<SERVER_IP>:8080"]
+```
 # Issue and question
 If the plugin does not work properly, try deleting config.yml.  
 Problems and questions feature request [here]([https://github.com/stellarcielo/velostat/issues).

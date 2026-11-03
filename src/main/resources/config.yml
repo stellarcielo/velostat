@@ -1,11 +1,15 @@
 #dont edit config version
-config_version: 1
+config_version: 2
 
 api:
   port: 8080 #server port
 
 ping:
   interval_seconds: 10 #ping interval in seconds
+
+prometheus:
+  enabled: true #enable Prometheus metrics endpoint
+  path: /metrics #metrics endpoint path
 
 export:
   server:

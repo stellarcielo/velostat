@@ -14,5 +14,7 @@ public class ServerStatus {
     public String versionName;
     public int protocol;
 
+    public long pingNanos;
+
     public long updateAt;
 }

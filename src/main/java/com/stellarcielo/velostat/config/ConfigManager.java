@@ -14,7 +14,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class ConfigManager {
 
-    public static final int CONFIG_VERSION = 1;
+    public static final int CONFIG_VERSION = 2;
 
     private final Path dataDir;
     private final Logger logger;
@@ -69,6 +69,11 @@ public class ConfigManager {
         if (version < 1) {
             migrateToV1();
         }
+        if (version < 2) {
+            migrateToV2();
+        }
+
+        config.put("config_version", CONFIG_VERSION);
 
         try (Writer writer = Files.newBufferedWriter(configPath)) {
             new Yaml().dump(config, writer);
@@ -82,7 +87,7 @@ public class ConfigManager {
                 "port", 8080
         ));
         config.putIfAbsent("ping", Map.of(
-                "interval", 10
+                "interval_seconds", 10
         ));
         config.putIfAbsent("export", Map.of(
                 "server", Map.of(
@@ -97,6 +102,13 @@ public class ConfigManager {
         ));
     }
 
+    private void migrateToV2() {
+        config.putIfAbsent("prometheus", Map.of(
+                "enabled", true,
+                "path", "/metrics"
+        ));
+    }
+
     /* ===== getters ===== */
 
     public int apiPort() {
@@ -105,6 +117,15 @@ public class ConfigManager {
 
     public int pingIntervalSeconds() {
         return (int) ((Map<String, Object>) config.get("ping")).get("interval_seconds");
+    }
+
+    public boolean prometheusEnabled() {
+        return (boolean) ((Map<String, Object>) config.get("prometheus")).get("enabled");
+    }
+
+    public String prometheusPath() {
+        String path = (String) ((Map<String, Object>) config.get("prometheus")).get("path");
+        return path.startsWith("/") ? path : "/" + path;
     }
 
     public boolean exportServerName() {

@@ -40,7 +40,10 @@ public class StatusCollector {
     }
 
     private void updateServer(RegisteredServer server) {
+        long pingStart = System.nanoTime();
         server.ping().thenAccept(ping -> {
+            long pingNanos = System.nanoTime() - pingStart;
+
             ServerStatus status = new ServerStatus();
             status.name = server.getServerInfo().getName();
             status.address = server.getServerInfo().getAddress().toString();
@@ -57,6 +60,7 @@ public class StatusCollector {
             status.versionName = version.getName();
             status.protocol = version.getProtocol();
 
+            status.pingNanos = pingNanos;
             status.updateAt = System.currentTimeMillis();
             cache.put(status.name, status);
         }).exceptionally(ex -> {

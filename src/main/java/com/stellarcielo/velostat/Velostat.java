@@ -61,8 +61,12 @@ public class Velostat {
         collector.start();
 
         try {
-            server = new StatusHttpServer(collector, config.apiPort(), config);
+            server = new StatusHttpServer(proxy, collector, config.apiPort(), config);
             server.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+
+            if (config.prometheusEnabled()) {
+                logger.info("Prometheus metrics available at {}", config.prometheusPath());
+            }
         } catch (Exception e) {
             logger.error("Failed to start HTTP server", e);
         }
